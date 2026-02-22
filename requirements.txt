@@ -1,0 +1,19 @@
+# Computer Vision
+opencv-python>=4.5.5
+opencv-contrib-python>=4.5.5
+
+# Numerical Computing
+numpy>=1.21.0
+
+# Visualization
+matplotlib>=3.5.0
+
+# Testing
+pytest>=7.0.0
+pytest-cov>=3.0.0
+
+# Video Processing
+moviepy>=1.0.3
+
+# Progress bars (optional, for video processing)
+tqdm>=4.62.0
