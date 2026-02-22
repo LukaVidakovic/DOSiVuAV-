@@ -211,8 +211,3 @@ __marimo__/
 
 # Project specific
 calibration.npz
-output_images/*.jpg
-output_images/*.png
-output_videos/*.mp4
-docs/*.jpg
-docs/*.png
