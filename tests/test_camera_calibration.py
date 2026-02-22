@@ -35,7 +35,8 @@ def test_calibrate_camera():
     assert mtx is not None
     assert dist is not None
     assert mtx.shape == (3, 3)
-    assert dist.shape[0] >= 4  # At least 4 distortion coefficients
+    # Distortion coefficients: (5,) or (5, 1) or (1, 5)
+    assert len(dist.flatten()) >= 4  # At least 4 distortion coefficients
 
     # Camera matrix should have non-zero focal lengths
     assert mtx[0, 0] > 0  # fx
