@@ -24,34 +24,34 @@ def load_calibration(calib_file='calibration.npz'):
 # ============================================================================
 
 def combined_threshold(img):
-    """Strict thresholding for precise lane detection with minimal noise"""
+    """Balanced thresholding - precise but not too strict"""
     
     hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
     l_channel = hls[:, :, 1]
     s_channel = hls[:, :, 2]
     
-    # White lines - very strict L-channel
+    # White lines - balanced
     l_binary = np.zeros_like(l_channel)
-    l_binary[(l_channel >= 230) & (l_channel <= 255)] = 1
+    l_binary[(l_channel >= 220) & (l_channel <= 255)] = 1
     
-    # Yellow lines - stricter S-channel
+    # Yellow lines - S-channel (balanced)
     s_binary = np.zeros_like(s_channel)
-    s_binary[(s_channel >= 120) & (s_channel <= 255)] = 1
+    s_binary[(s_channel >= 100) & (s_channel <= 255)] = 1
     
     # Yellow lines - LAB B-channel
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     b_channel = lab[:, :, 2]
     b_binary = np.zeros_like(b_channel)
-    b_binary[(b_channel >= 150) & (b_channel <= 190)] = 1
+    b_binary[(b_channel >= 145) & (b_channel <= 195)] = 1
     
-    # Yellow lines - RGB check (high R+G, low B)
+    # Yellow lines - RGB check
     r_channel = img[:, :, 2]
     g_channel = img[:, :, 1]
     b_channel_rgb = img[:, :, 0]
     yellow_rgb = np.zeros_like(r_channel)
-    yellow_rgb[(r_channel >= 200) & (g_channel >= 200) & (b_channel_rgb < 150)] = 1
+    yellow_rgb[(r_channel >= 190) & (g_channel >= 190) & (b_channel_rgb < 160)] = 1
     
-    # Combine yellow detections (voting: 2 out of 3)
+    # Combine yellow (any 2 out of 3)
     yellow_votes = s_binary.astype(int) + b_binary.astype(int) + yellow_rgb.astype(int)
     yellow = np.zeros_like(s_binary)
     yellow[yellow_votes >= 2] = 1
