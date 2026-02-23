@@ -39,7 +39,7 @@ TODO: Add your text here!!!
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
-TODO: Add your tyext here!!!
+ext here!!!
 
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 

@@ -26,7 +26,7 @@ The goals / steps of this project are the following:
 
 ```
 ├── calibrate_camera.py          # Camera calibration script
-├── lane_detection_final.py      # Main lane detection pipeline
+├── lane_detection.py            # Main lane detection pipeline
 ├── generate_docs_images.py      # Documentation image generator
 ├── calibration.npz              # Camera calibration parameters
 ├── camera_cal/                  # Chessboard calibration images
@@ -107,7 +107,7 @@ def calibrate_camera(images_path='camera_cal/calibration*.jpg', nx=9, ny=6):
 
 ### 2. Distortion Correction
 
-**Code:** `lane_detection_final.py` - `process_image()` function
+**Code:** `lane_detection.py` - `process_image()` function
 
 Using the calibration parameters from step 1, I undistort each image using `cv2.undistort()`.
 
@@ -131,7 +131,7 @@ undist = cv2.undistort(img, mtx, dist, None, mtx)
 
 ### 3. Binary Thresholding
 
-**Code:** `lane_detection_final.py` - `combined_threshold()` function
+**Code:** `lane_detection.py` - `combined_threshold()` function
 
 This is one of the most critical steps. After extensive testing with different color spaces (HLS, LAB, RGB), I found that **HSV color space** provides the best results for detecting both yellow and white lane lines.
 
@@ -177,7 +177,7 @@ def combined_threshold(img):
 
 ### 4. Perspective Transform
 
-**Code:** `lane_detection_final.py` - `get_perspective_transform()` function
+**Code:** `lane_detection.py` - `get_perspective_transform()` function
 
 To accurately detect curved lanes, I transform the image to a bird's-eye view. This makes parallel lane lines appear parallel in the transformed image.
 
@@ -228,7 +228,7 @@ def get_perspective_transform(img_shape):
 
 ### 5. Lane Pixel Detection (Sliding Windows)
 
-**Code:** `lane_detection_final.py` - `find_lane_pixels()` function
+**Code:** `lane_detection.py` - `find_lane_pixels()` function
 
 I use the sliding window technique to identify which pixels belong to left and right lane lines.
 
@@ -306,7 +306,7 @@ def find_lane_pixels(binary_warped, nwindows=9, margin=100, minpix=50):
 
 ### 6. Polynomial Fitting
 
-**Code:** `lane_detection_final.py` - `fit_polynomial()` function
+**Code:** `lane_detection.py` - `fit_polynomial()` function
 
 I fit a 2nd order polynomial to the detected lane pixels:
 
@@ -330,7 +330,7 @@ def fit_polynomial(leftx, lefty, rightx, righty):
 
 ### 7. Curvature and Vehicle Position
 
-**Code:** `lane_detection_final.py` - `calculate_curvature()` and `calculate_vehicle_position()` functions
+**Code:** `lane_detection.py` - `calculate_curvature()` and `calculate_vehicle_position()` functions
 
 #### Radius of Curvature
 
@@ -410,7 +410,7 @@ def calculate_vehicle_position(left_fit, right_fit, img_width, img_height):
 
 ### 8. Visualization
 
-**Code:** `lane_detection_final.py` - `draw_lane()` and `add_text()` functions
+**Code:** `lane_detection.py` - `draw_lane()` and `add_text()` functions
 
 Final step is to visualize the detected lane:
 
@@ -627,7 +627,7 @@ This generates `calibration.npz` file.
 ### Step 2: Process Images
 
 ```bash
-python lane_detection_final.py --images
+python lane_detection.py --images
 ```
 
 Results saved to `output_images/` folder.
@@ -635,7 +635,7 @@ Results saved to `output_images/` folder.
 ### Step 3: Process Videos
 
 ```bash
-python lane_detection_final.py --videos
+python lane_detection.py --videos
 ```
 
 Results saved to `output_videos/` folder.

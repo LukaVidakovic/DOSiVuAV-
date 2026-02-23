@@ -3,7 +3,7 @@
 Generate Documentation Images
 
 Creates all necessary images showing each pipeline step.
-Uses actual functions from lane_detection_final.py to ensure consistency.
+Uses actual functions from lane_detection.py to ensure consistency.
 """
 
 import numpy as np
@@ -13,7 +13,7 @@ import sys
 
 # Import functions from main pipeline
 sys.path.insert(0, '.')
-from lane_detection_final import (
+from lane_detection import (
     load_calibration,
     combined_threshold,
     get_perspective_transform,

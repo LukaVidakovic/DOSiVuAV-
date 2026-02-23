@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """
-Finalni Lane Detection Pipeline - Čist i Funkcionalan
+Lane Detection Pipeline
 
-Integriše sve testirane komponente u jedan pipeline.
+Complete pipeline for detecting lane lines in images and videos.
+Includes camera calibration, binary thresholding, perspective transform,
+sliding window detection, polynomial fitting, and curvature calculation.
 """
 
 import numpy as np
@@ -14,7 +16,7 @@ import glob
 last_radius = None
 
 # ============================================================================
-# 1. KALIBRACIJA KAMERE
+# 1. CAMERA CALIBRATION
 # ============================================================================
 
 def load_calibration(calib_file='calibration.npz'):
@@ -23,7 +25,7 @@ def load_calibration(calib_file='calibration.npz'):
     return data['mtx'], data['dist']
 
 # ============================================================================
-# 2. BINARNA SEGMENTACIJA
+# 2. BINARY THRESHOLDING
 # ============================================================================
 
 def combined_threshold(img):
@@ -48,7 +50,7 @@ def combined_threshold(img):
     return combined // 255
 
 # ============================================================================
-# 3. PERSPEKTIVNA TRANSFORMACIJA
+# 3. PERSPECTIVE TRANSFORM
 # ============================================================================
 
 def get_perspective_transform(img_shape):
@@ -75,7 +77,7 @@ def get_perspective_transform(img_shape):
     return M, Minv
 
 # ============================================================================
-# 4. DETEKCIJA PIKSELA LINIJA
+# 4. LANE PIXEL DETECTION
 # ============================================================================
 
 def find_lane_pixels(binary_warped, nwindows=9, margin=100, minpix=50):
@@ -132,7 +134,7 @@ def find_lane_pixels(binary_warped, nwindows=9, margin=100, minpix=50):
     return leftx, lefty, rightx, righty
 
 # ============================================================================
-# 5. FITOVANJE POLINOMA
+# 5. POLYNOMIAL FITTING
 # ============================================================================
 
 def fit_polynomial(leftx, lefty, rightx, righty):
@@ -142,7 +144,7 @@ def fit_polynomial(leftx, lefty, rightx, righty):
     return left_fit, right_fit
 
 # ============================================================================
-# 6. ZAKRIVLJENOST I POZICIJA
+# 6. CURVATURE AND POSITION
 # ============================================================================
 
 YM_PER_PIX = 30/720
@@ -185,7 +187,7 @@ def calculate_vehicle_position(left_fit, right_fit, img_width, img_height):
     return offset
 
 # ============================================================================
-# 7. VIZUALIZACIJA
+# 7. VISUALIZATION
 # ============================================================================
 
 def draw_lane(undist, binary_warped, left_fit, right_fit, Minv):
@@ -232,7 +234,7 @@ def add_text(img, curvature, offset):
     return img
 
 # ============================================================================
-# 8. GLAVNI PIPELINE
+# 8. MAIN PIPELINE
 # ============================================================================
 
 def process_image(img, mtx, dist):
