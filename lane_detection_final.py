@@ -10,6 +10,9 @@ import cv2
 import os
 import glob
 
+# Global for temporal smoothing
+last_radius = None
+
 # ============================================================================
 # 1. KALIBRACIJA KAMERE
 # ============================================================================
@@ -24,43 +27,25 @@ def load_calibration(calib_file='calibration.npz'):
 # ============================================================================
 
 def combined_threshold(img):
-    """Balanced thresholding - precise but not too strict"""
+    """HSV-based color detection with morphological closing"""
     
-    hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
-    l_channel = hls[:, :, 1]
-    s_channel = hls[:, :, 2]
+    # HSV color space (better for yellow/white than HLS)
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     
-    # White lines - balanced
-    l_binary = np.zeros_like(l_channel)
-    l_binary[(l_channel >= 220) & (l_channel <= 255)] = 1
+    # Yellow: H=15-40, S=80-255, V=160-255
+    yellow = cv2.inRange(hsv, (15, 80, 160), (40, 255, 255))
     
-    # Yellow lines - S-channel (balanced)
-    s_binary = np.zeros_like(s_channel)
-    s_binary[(s_channel >= 100) & (s_channel <= 255)] = 1
+    # White: H=0-255, S=0-20, V=200-255
+    white = cv2.inRange(hsv, (0, 0, 200), (255, 20, 255))
     
-    # Yellow lines - LAB B-channel
-    lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
-    b_channel = lab[:, :, 2]
-    b_binary = np.zeros_like(b_channel)
-    b_binary[(b_channel >= 145) & (b_channel <= 195)] = 1
+    # Combine masks
+    combined = cv2.bitwise_or(yellow, white)
     
-    # Yellow lines - RGB check
-    r_channel = img[:, :, 2]
-    g_channel = img[:, :, 1]
-    b_channel_rgb = img[:, :, 0]
-    yellow_rgb = np.zeros_like(r_channel)
-    yellow_rgb[(r_channel >= 190) & (g_channel >= 190) & (b_channel_rgb < 160)] = 1
+    # Morphological closing to remove noise
+    kernel = np.ones((5,5), np.uint8)
+    combined = cv2.morphologyEx(combined, cv2.MORPH_CLOSE, kernel, iterations=3)
     
-    # Combine yellow (any 2 out of 3)
-    yellow_votes = s_binary.astype(int) + b_binary.astype(int) + yellow_rgb.astype(int)
-    yellow = np.zeros_like(s_binary)
-    yellow[yellow_votes >= 2] = 1
-    
-    # Final: yellow OR white
-    combined = np.zeros_like(l_binary)
-    combined[(yellow == 1) | (l_binary == 1)] = 1
-    
-    return combined
+    return combined // 255
 
 # ============================================================================
 # 3. PERSPEKTIVNA TRANSFORMACIJA
@@ -164,7 +149,9 @@ YM_PER_PIX = 30/720
 XM_PER_PIX = 3.7/700
 
 def calculate_curvature(left_fit, right_fit, y_eval, img_shape):
-    """Calculate radius of curvature in meters"""
+    """Calculate radius with temporal smoothing"""
+    global last_radius
+    
     ploty = np.linspace(0, img_shape[0]-1, img_shape[0])
     left_fitx = left_fit[0]*ploty**2 + left_fit[1]*ploty + left_fit[2]
     right_fitx = right_fit[0]*ploty**2 + right_fit[1]*ploty + right_fit[2]
@@ -177,7 +164,15 @@ def calculate_curvature(left_fit, right_fit, y_eval, img_shape):
     left_curverad = ((1 + (2*left_fit_cr[0]*y_eval_world + left_fit_cr[1])**2)**1.5) / np.abs(2*left_fit_cr[0])
     right_curverad = ((1 + (2*right_fit_cr[0]*y_eval_world + right_fit_cr[1])**2)**1.5) / np.abs(2*right_fit_cr[0])
     
-    return left_curverad, right_curverad
+    # Temporal smoothing
+    current = np.mean([left_curverad, right_curverad])
+    if last_radius is not None:
+        radius = np.mean([current, last_radius])
+    else:
+        radius = current
+    last_radius = current
+    
+    return radius, radius
 
 def calculate_vehicle_position(left_fit, right_fit, img_width, img_height):
     """Calculate vehicle offset from center"""
