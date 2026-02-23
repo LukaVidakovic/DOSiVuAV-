@@ -650,20 +650,12 @@ Pipeline step images saved to `docs/` folder.
 
 ---
 
-## References
-
-1. Udacity Self-Driving Car Nanodegree - Advanced Lane Finding Project
-2. OpenCV Documentation - Camera Calibration and 3D Reconstruction
-3. DHBW Stuttgart - Lane Detection Project (HSV color space inspiration)
-4. Advanced Lane Line Detection - Udacity Student Projects
-
----
-
 ## Author
 
 **Luka Vidaković**  
-Computer Vision for Autonomous Vehicles  
-DHBW Stuttgart / University Project
+University of Novi Sad  
+Faculty of Technical Sciences  
+E2 40/2025
 
 ---
 
