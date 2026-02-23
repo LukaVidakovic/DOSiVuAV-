@@ -211,3 +211,7 @@ __marimo__/
 
 # Project specific
 calibration.npz
+
+# Kiro CLI
+.kiro/
+agents/
