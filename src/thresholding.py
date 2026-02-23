@@ -214,6 +214,7 @@ def combined_threshold(
     Strategy:
     - Gradient thresholds (Sobel X, magnitude, direction) detect edges
     - Color thresholds (HLS S-channel, RGB R-channel) detect yellow/white lanes
+    - Apply ROI mask to exclude sky and trees
 
     Args:
         img: Input BGR image
@@ -225,7 +226,7 @@ def combined_threshold(
         rgb_thresh: RGB R-channel threshold (good for yellow)
 
     Returns:
-        Combined binary image
+        Combined binary image with ROI mask applied
     """
     # Gradient thresholds
     gradx = abs_sobel_thresh(img, orient='x', sobel_kernel=sobel_kernel, thresh=grad_thresh)
@@ -247,6 +248,17 @@ def combined_threshold(
     # Combine gradient and color
     combined = np.zeros_like(gradient_binary)
     combined[(gradient_binary == 1) | (color_binary == 1)] = 1
+
+    # Apply region of interest mask to exclude sky, trees, etc.
+    height, width = combined.shape
+    vertices = np.array([[
+        (int(0.1 * width), height),                    # Bottom left
+        (int(0.45 * width), int(0.6 * height)),        # Top left
+        (int(0.55 * width), int(0.6 * height)),        # Top right
+        (int(0.9 * width), height)                     # Bottom right
+    ]], dtype=np.int32)
+
+    combined = region_of_interest(combined, vertices)
 
     return combined
 

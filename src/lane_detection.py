@@ -35,6 +35,24 @@ def find_lane_base(
     leftx_base = np.argmax(histogram[:midpoint])
     rightx_base = np.argmax(histogram[midpoint:]) + midpoint
 
+    # Check if lane width is reasonable (min 400px, typical ~700px)
+    lane_width = rightx_base - leftx_base
+
+    if lane_width < 400:
+        # Lanes too close - try finding peaks in outer quarters instead
+        quarter = len(histogram) // 4
+
+        # Left lane in left quarter
+        leftx_base = np.argmax(histogram[:quarter])
+
+        # Right lane in right quarter
+        rightx_base = np.argmax(histogram[3*quarter:]) + 3*quarter
+
+        # If still too close, use default positions (assume centered)
+        if rightx_base - leftx_base < 400:
+            leftx_base = int(midpoint - 350)  # Default left (~130px from left edge)
+            rightx_base = int(midpoint + 350)  # Default right (~130px from right edge)
+
     if visualize:
         return leftx_base, rightx_base, histogram
 
