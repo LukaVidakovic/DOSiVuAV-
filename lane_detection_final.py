@@ -27,7 +27,7 @@ def load_calibration(calib_file='calibration.npz'):
 # ============================================================================
 
 def combined_threshold(img):
-    """HSV-based color detection with morphological closing"""
+    """HSV color space with morphological closing"""
     
     # HSV color space (better for yellow/white than HLS)
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -164,15 +164,15 @@ def calculate_curvature(left_fit, right_fit, y_eval, img_shape):
     left_curverad = ((1 + (2*left_fit_cr[0]*y_eval_world + left_fit_cr[1])**2)**1.5) / np.abs(2*left_fit_cr[0])
     right_curverad = ((1 + (2*right_fit_cr[0]*y_eval_world + right_fit_cr[1])**2)**1.5) / np.abs(2*right_fit_cr[0])
     
-    # Temporal smoothing
+    # Temporal smoothing for video stability
     current = np.mean([left_curverad, right_curverad])
     if last_radius is not None:
-        radius = np.mean([current, last_radius])
+        smoothed = np.mean([current, last_radius])
     else:
-        radius = current
+        smoothed = current
     last_radius = current
     
-    return radius, radius
+    return smoothed, smoothed
 
 def calculate_vehicle_position(left_fit, right_fit, img_width, img_height):
     """Calculate vehicle offset from center"""

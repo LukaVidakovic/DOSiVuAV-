@@ -17,16 +17,6 @@ The goals / steps of this project are the following:
 * Warp the detected lane boundaries back onto the original image.
 * Output visual display of the lane boundaries and numerical estimation of lane curvature and vehicle position.
 
-[//]: # (Image References)
-
-[image1]: ./examples/undistort_output.png "Undistorted"
-[image2]: ./test_images/test1.jpg "Road Transformed"
-[image3]: ./examples/binary_combo_example.jpg "Binary Example"
-[image4]: ./examples/warped_straight_lines.jpg "Warp Example"
-[image5]: ./examples/color_fit_lines.jpg "Fit Visual"
-[image6]: ./examples/example_output.jpg "Output"
-[video1]: ./project_video.mp4 "Video"
-
 ---
 
 ### Writeup / README
@@ -49,7 +39,7 @@ TODO: Add your text here!!!
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
-TODO: Add your text here!!!
+TODO: Add your tyext here!!!
 
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 
@@ -79,3 +69,11 @@ TODO: Add your text here!!!
 
 TODO: Add your text here!!!
 
+[//]: #
+[image1]: ./examples/undistort_output.png
+[image2]: ./test_images/test1.jpg
+[image3]: ./examples/binary_combo_example.jpg
+[image4]: ./examples/warped_straight_lines.jpg
+[image5]: ./examples/color_fit_lines.jpg
+[image6]: ./examples/example_output.jpg
+[video1]: ./project_video.mp4
