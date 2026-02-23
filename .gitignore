@@ -215,3 +215,4 @@ calibration.npz
 # Kiro CLI
 .kiro/
 agents/
+.DS_Store
