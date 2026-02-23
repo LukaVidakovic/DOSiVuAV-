@@ -206,8 +206,8 @@ def draw_lane(undist, binary_warped, left_fit, right_fit, Minv):
     pts = np.hstack((pts_left, pts_right))
     
     cv2.fillPoly(color_warp, np.int32([pts]), (0, 255, 0))
-    cv2.polylines(color_warp, np.int32([pts_left]), False, (255, 0, 0), thickness=25)
-    cv2.polylines(color_warp, np.int32([pts_right]), False, (0, 0, 255), thickness=25)
+    cv2.polylines(color_warp, np.int32([pts_left]), False, (255, 0, 0), thickness=15)
+    cv2.polylines(color_warp, np.int32([pts_right]), False, (0, 0, 255), thickness=15)
     
     newwarp = cv2.warpPerspective(color_warp, Minv, (undist.shape[1], undist.shape[0]))
     result = cv2.addWeighted(undist, 1, newwarp, 0.3, 0)
